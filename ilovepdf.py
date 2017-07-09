@@ -21,15 +21,15 @@ class ILovePdf:
             self.secret_key,
             algorithm="HS256"
         ).decode("utf-8")
-        self.headers = {"Authorization": f"Bearer {signed_public_key}"}
+        self.headers = {"Authorization": "Bearer {}".format(signed_public_key)}
 
     def new_task(self, task):
         self.task = task
-        url = f"{API_ENTRY_POINT}/{task}"
+        url = "{}/{}".format(API_ENTRY_POINT, task)
         response = requests.get(url, headers=self.headers).json()
         self.server = response["server"]
         self.task_id = response["task"]
-        self.base_api_url = f"https://{self.server}/v1"
+        self.base_api_url = "https://{}/v1".format(self.server)
 
     def add_file(self, filename):
         self.filename = filename
@@ -62,7 +62,7 @@ class ILovePdf:
         self.timer = response["timer"]
 
     def download(self, output_filename=None):
-        url = self.base_api_url + f"/download/{self.task_id}"
+        url = self.base_api_url + "/download/{}".format(self.task_id)
         response = requests.get(url, headers=self.headers)
         output_filename = output_filename or self.filename
         with open(output_filename, "wb") as output_file:
