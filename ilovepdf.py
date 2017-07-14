@@ -2,8 +2,13 @@ import jwt
 import requests
 import logging
 import logging.config
+import sys
 
 API_ENTRY_POINT = "https://api.ilovepdf.com/v1/start"
+TASKS = ("merge", "split", "compress", "pdfjpg", "imagepdf", "unlock",
+         "pagenumber", "watermark", "officepdf", "repair", "rotate", "protect",
+         "pdfa", "validatepdfa", "extract")
+IMPLEMENTED_TASKS = ("compress", "merge")
 
 
 class ILovePdf:
@@ -31,6 +36,18 @@ class ILovePdf:
         self.headers = {"Authorization": "Bearer {}".format(signed_public_key)}
 
     def new_task(self, task):
+        if task not in TASKS:
+            self.logger.error(
+                "Chosen task '{}' is not available".format(task)
+            )
+            sys.exit()
+        if task not in IMPLEMENTED_TASKS:
+            self.logger.error(
+                "Chosen task '{}' is not yet implemented".format(task)
+            )
+            sys.exit()
+
+        self.files = []
         self.task = task
         url = "{}/{}".format(API_ENTRY_POINT, task)
         if self.verbose:
@@ -43,7 +60,6 @@ class ILovePdf:
     def add_file(self, filename):
         if self.verbose:
             self.logger.info("Adding file '{}'".format(filename))
-        self.filename = filename
         url = self.base_api_url + "/upload"
         params = {"task": self.task_id}
         files = {"file": open(filename, "rb")}
@@ -56,31 +72,35 @@ class ILovePdf:
             headers=self.headers
         ).json()
         self.server_filename = response["server_filename"]
+        self.files.append({
+            "server_filename": response["server_filename"],
+            "filename": filename
+        })
 
     def execute(self):
         url = self.base_api_url + "/process"
         params = {
             "task": self.task_id,
             "tool": self.task,
-            "files": [
-                {
-                    "server_filename": self.server_filename,
-                    "filename": self.filename
-                }
-            ]
+            "files": self.files
         }
         if self.verbose:
             self.logger.info("Processing the uploaded files...")
         response = requests.post(url, json=params, headers=self.headers).json()
-        self.filesize = response["filesize"]
-        self.output_filesize = response["output_filesize"]
         self.timer = response["timer"]
 
-    def download(self, output_filename=None):
+    def download(self, output_filename=None, overwrite=False):
         url = self.base_api_url + "/download/{}".format(self.task_id)
         if self.verbose:
             self.logger.info("Downloading output files...")
         response = requests.get(url, headers=self.headers)
-        output_filename = output_filename or self.filename
+        if overwrite:
+            output_filename = self.files[0]["filename"]
+        elif not output_filename:
+            output_filename = "out.pdf"
         with open(output_filename, "wb") as output_file:
             output_file.write(response.content)
+        if self.verbose:
+            self.logger.info(
+                "Finished. Output file in '{}'".format(output_filename)
+            )
