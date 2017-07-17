@@ -8,7 +8,7 @@ API_ENTRY_POINT = "https://api.ilovepdf.com/v1/start"
 TASKS = ("merge", "split", "compress", "pdfjpg", "imagepdf", "unlock",
          "pagenumber", "watermark", "officepdf", "repair", "rotate", "protect",
          "pdfa", "validatepdfa", "extract")
-IMPLEMENTED_TASKS = ("compress", "merge")
+IMPLEMENTED_TASKS = ("compress", "merge", "split")
 
 
 class ILovePdf:
@@ -77,13 +77,15 @@ class ILovePdf:
             "filename": filename
         })
 
-    def execute(self):
+    def execute(self, **kwargs):
         url = self.base_api_url + "/process"
-        params = {
+        fixed_params = {
             "task": self.task_id,
             "tool": self.task,
             "files": self.files
         }
+        params = fixed_params.copy()
+        params.update(kwargs)
         if self.verbose:
             self.logger.info("Processing the uploaded files...")
         response = requests.post(url, json=params, headers=self.headers).json()
@@ -94,13 +96,42 @@ class ILovePdf:
         if self.verbose:
             self.logger.info("Downloading output files...")
         response = requests.get(url, headers=self.headers)
-        if overwrite:
-            output_filename = self.files[0]["filename"]
-        elif not output_filename:
-            output_filename = "out.pdf"
+        output_filename = self.__get_output_filename(
+            output_filename, overwrite
+        )
         with open(output_filename, "wb") as output_file:
             output_file.write(response.content)
         if self.verbose:
             self.logger.info(
                 "Finished. Output file in '{}'".format(output_filename)
             )
+        return response.status_code
+
+    def __get_output_filename(self, output_filename=None, overwrite=False):
+        if self.task == "merge":
+            filetype = "pdf"
+        elif self.task == "split":
+            filetype = "zip"
+        elif self.task == "pdfjpg":
+            if len(self.files) == 1:
+                filetype = "jpg"
+            else:
+                filetype = "zip"
+        else:
+            if len(self.files) == 1:
+                filetype = "pdf"
+            else:
+                filetype = "zip"
+        if output_filename:
+            ft = output_filename[-3:]
+            if ft != filetype:
+                output_filename += ("." + filetype)
+        else:
+            output_filename = "out." + filetype
+        overwritable_tasks = [
+            "compress", "unlock", "pagenumber", "watermark", "repair",
+            "rotate", "protect", "pdfa", "validatepdfa", "extract"
+        ]
+        if overwrite and filetype == "pdf" and self.task in overwritable_tasks:
+            output_filename = self.files[0]["filename"]
+        return output_filename
