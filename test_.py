@@ -64,3 +64,12 @@ def test_pdfjpg():
     assert len(glob.glob("test_pdfjpg/*.jpg")) == input_file.getNumPages()
     os.remove("out.zip")
     shutil.rmtree("test_pdfjpg")
+
+
+def test_imagepdf():
+    i = ILovePdf(config.PUBLIC_KEY, config.SECRET_KEY)
+    i.new_task("imagepdf")
+    i.add_file("test.jpg")
+    i.execute()
+    i.download()
+    assert os.path.isfile("out.pdf")

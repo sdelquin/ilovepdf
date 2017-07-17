@@ -8,7 +8,7 @@ API_ENTRY_POINT = "https://api.ilovepdf.com/v1/start"
 TASKS = ("merge", "split", "compress", "pdfjpg", "imagepdf", "unlock",
          "pagenumber", "watermark", "officepdf", "repair", "rotate", "protect",
          "pdfa", "validatepdfa", "extract")
-IMPLEMENTED_TASKS = ("compress", "merge", "split", "pdfjpg")
+IMPLEMENTED_TASKS = ("merge", "split", "compress", "pdfjpg", "imagepdf")
 
 
 class ILovePdf:

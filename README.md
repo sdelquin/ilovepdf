@@ -40,10 +40,11 @@ $> python ipdf.py compress --verbose -o compressed_doc.pdf input.pdf
 ## Disclaimer
 
 Implemented tasks:
-* `compress`
 * `merge`
 * `split`
+* `compress`
 * `pdfjpg`
+* `imagepdf`
 
 ## Developer Keys
 
