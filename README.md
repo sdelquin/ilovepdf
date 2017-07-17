@@ -2,9 +2,48 @@
 
 Python module that wraps the [iLovePDF REST API](https://developer.ilovepdf.com/docs/api-reference).
 
+## Installation
+
+```console
+$> mkvirtualenv ilovepdf
+$> workon ilovepdf
+$> git clone git@github.com:sdelquin/ilovepdf.git
+$> cd ilovepdf
+$> pip install -r requirements
+$> cp config.tmpl.py config.py
+# modify config.py with your keys
+```
+
+## Usage
+
+### Using ilovepdf as a library
+
+Example of compressing a file:
+```python
+from ilovepdf import ILovePdf
+
+i = ILovePdf(config.PUBLIC_KEY, config.SECRET_KEY)
+i.new_task("compress")
+i.add_file("input.pdf")
+i.execute()
+i.download("compressed_doc.pdf")
+```
+
+### Using ilovepdf as a standalone script
+
+Example of compressing a file:
+
+```console
+$> python ipdf.py compress --verbose -o compressed_doc.pdf input.pdf
+```
+
 ## Disclaimer
 
-At this moment, `compress` is the only task that is implemented and tested.
+Implemented tasks:
+* `compress`
+* `merge`
+* `split`
+* `pdfjpg`
 
 ## Developer Keys
 
@@ -21,8 +60,5 @@ The lib is compatible from *Python 2.7* to *Python 3.6*.
 ## Tests
 
 ```console
-> pip install -r requirements
-> cp config.tmpl.py config.py
-# modify config.py with your keys
-> pytest
+$> pytest
 ```

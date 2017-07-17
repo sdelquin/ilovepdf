@@ -8,7 +8,7 @@ API_ENTRY_POINT = "https://api.ilovepdf.com/v1/start"
 TASKS = ("merge", "split", "compress", "pdfjpg", "imagepdf", "unlock",
          "pagenumber", "watermark", "officepdf", "repair", "rotate", "protect",
          "pdfa", "validatepdfa", "extract")
-IMPLEMENTED_TASKS = ("compress", "merge", "split")
+IMPLEMENTED_TASKS = ("compress", "merge", "split", "pdfjpg")
 
 
 class ILovePdf:
@@ -110,13 +110,8 @@ class ILovePdf:
     def __get_output_filename(self, output_filename=None, overwrite=False):
         if self.task == "merge":
             filetype = "pdf"
-        elif self.task == "split":
+        elif self.task in ["split", "pdfjpg"]:
             filetype = "zip"
-        elif self.task == "pdfjpg":
-            if len(self.files) == 1:
-                filetype = "jpg"
-            else:
-                filetype = "zip"
         else:
             if len(self.files) == 1:
                 filetype = "pdf"
