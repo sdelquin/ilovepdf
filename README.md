@@ -4,15 +4,13 @@ Python module that wraps the [iLovePDF REST API](https://developer.ilovepdf.com/
 
 ## Installation
 
-```console
-$> mkvirtualenv ilovepdf
-$> workon ilovepdf
-$> git clone git@github.com:sdelquin/ilovepdf.git
-$> cd ilovepdf
-$> pip install -r requirements
-$> cp config.tmpl.py config.py
-# modify config.py with your keys
-```
+~~~console
+$ git clone git@github.com:sdelquin/ilovepdf.git
+$ cd ilovepdf
+$ pipenv install
+~~~
+
+> Set your settings in the `.env` file.
 
 ## Usage
 
@@ -23,19 +21,19 @@ Example of compressing a file:
 from ilovepdf import ILovePdf
 
 i = ILovePdf(config.PUBLIC_KEY, config.SECRET_KEY)
-i.new_task("compress")
-i.add_file("input.pdf")
+i.new_task('compress')
+i.add_file('input.pdf')
 i.execute()
-i.download("compressed_doc.pdf")
+i.download('compressed_doc.pdf')
 ```
 
 ### Using ilovepdf as a standalone script
 
 Example of compressing a file:
 
-```console
-$> python ipdf.py compress --verbose -o compressed_doc.pdf input.pdf
-```
+~~~console
+$ python ipdf.py compress --verbose -o compressed_doc.pdf input.pdf
+~~~
 
 ## Disclaimer
 
@@ -52,11 +50,7 @@ In order to work properly with the module, you will have to get the developer ke
 - Project key (JTI Claim) aka **Public key**.
 - **Secret key**.
 
-Both keys should be written in `config.py`.
-
-## Python versions
-
-The lib is compatible from *Python 2.7* to *Python 3.6*.
+> Add these keys to `.env` file.
 
 ## Tests
 

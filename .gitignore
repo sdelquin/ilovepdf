@@ -1,6 +1,6 @@
 *.pyc
-config.py
 .DS_Store
 out.pdf
 .cache
 .vscode
+.env

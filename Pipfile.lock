@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "9d35a222f33a23cf2fc3ac63bdf7bc43e43ef8ed924db1317b19fac5eeb2a4e8"
+            "sha256": "bf1c9a6b3c6ebcd48c3edbace738dd06360ed5e90261ecef1cc2f69c2f23e617"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -52,6 +52,13 @@
             ],
             "markers": "python_version != '3.0.*' and python_version != '3.1.*' and python_version != '3.2.*' and python_version >= '2.7' and python_version != '3.3.*'",
             "version": "==2.8"
+        },
+        "prettyconf": {
+            "hashes": [
+                "sha256:83a23f3e01a2bb3c42c938c7823e61dcaf2eab47b27f5ed1e9fb76b2afe2023e"
+            ],
+            "index": "pypi",
+            "version": "==1.2.3"
         },
         "pyjwt": {
             "hashes": [
